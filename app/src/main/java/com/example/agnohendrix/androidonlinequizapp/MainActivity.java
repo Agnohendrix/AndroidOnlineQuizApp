@@ -7,9 +7,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.agnohendrix.androidonlinequizapp.Model.User;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,6 +48,41 @@ public class MainActivity extends AppCompatActivity {
                 showSignupDialog();
             }
         });
+
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn(editUserName.getText().toString(), editPassword.getText().toString());
+            }
+        });
+    }
+
+    private void signIn(final String user, final String pwd) {
+        users.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //Checks if User exists in database
+                if(dataSnapshot.child(user).exists()){
+                    if(!user.isEmpty()){
+                        User login = dataSnapshot.child(user).getValue(User.class);
+                        //Checks password for inserted user
+                        if(login.getPassword().equals(pwd)){
+                            Toast.makeText(MainActivity.this, "Login ok!", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+                else
+                    Toast.makeText(MainActivity.this, "User does not exist!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void showSignupDialog() {
@@ -66,6 +106,32 @@ public class MainActivity extends AppCompatActivity {
                 dialogInterface.dismiss();
             }
         });
-        
+
+        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final User user = new User(editNewUserName.getText().toString(), editNewPassword.getText().toString(), editNewEmail.getText().toString());
+
+                users.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Checks if user already exists, according to UserName
+                        if(dataSnapshot.child(user.getUserName()).exists())
+                                Toast.makeText(MainActivity.this, "User already exists!", Toast.LENGTH_SHORT).show();
+                        else{
+                            users.child(user.getUserName()).setValue(user);
+                            Toast.makeText(MainActivity.this, "User registration succes!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                dialogInterface.dismiss();
+            }
+        });
+        alertDialog.show();
     }
 }
