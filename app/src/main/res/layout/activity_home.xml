@@ -11,19 +11,21 @@
         android:id="@+id/frame_layout"
         android:animateLayoutChanges="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/navigation">
 
     </FrameLayout>
 
     <android.support.design.widget.BottomNavigationView
-        android:id="@+id/Naigation"
+        android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
         app:itemIconTint="@drawable/nav_item_color_state"
         app:itemTextColor="@drawable/nav_item_color_state"
-        app:menu="@menu/bottom_menu"
-        ></android.support.design.widget.BottomNavigationView>
+        app:menu="@menu/bottom_menu">
+
+    </android.support.design.widget.BottomNavigationView>
 
 </RelativeLayout>
