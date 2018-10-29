@@ -5,7 +5,6 @@ public class Category {
     private String image;
 
     public Category(){
-
     }
 
     public Category(String name, String image){
@@ -22,6 +21,10 @@ public class Category {
     }
 
     public String getImage() {
-        return this.image;
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

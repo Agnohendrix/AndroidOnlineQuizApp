@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,14 +74,14 @@ public class CategoryFragment extends Fragment {
             @Override
             protected void populateViewHolder(CategoryViewHolder viewHolder, final Category model, int position) {
                 viewHolder.category_name.setText(model.getName());
-                Picasso.with(getActivity())
+                Picasso.get()
                         .load(model.getImage())
                         .into(viewHolder.category_image);
 
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-                        Toast.makeText(getContext(), String.format("%d|%s", adapter.getRef(position).getKey(), model.getName()), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.format("%s|%s", adapter.getRef(position).getKey(), model.getName()), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
