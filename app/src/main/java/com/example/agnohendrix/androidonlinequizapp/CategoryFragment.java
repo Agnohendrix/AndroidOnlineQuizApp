@@ -1,6 +1,7 @@
 package com.example.agnohendrix.androidonlinequizapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.agnohendrix.androidonlinequizapp.CategoryViewHolder.CategoryViewHolder;
+import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.example.agnohendrix.androidonlinequizapp.Interface.ItemClickListener;
 import com.example.agnohendrix.androidonlinequizapp.Model.Category;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -81,7 +83,12 @@ public class CategoryFragment extends Fragment {
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-                        Toast.makeText(getContext(), String.format("%s|%s", adapter.getRef(position).getKey(), model.getName()), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), String.format("%s|%s", adapter.getRef(position).getKey(), model.getName()), Toast.LENGTH_SHORT).show();
+                        Intent startGame = new Intent(getActivity(), Start.class);
+                        Common.categoryId = adapter.getRef(position).getKey();
+                        startGame.putExtra("Category", Common.categoryId);
+                        startGame.putExtra("Image", model.getImage());
+                        startActivity(startGame);
                     }
                 });
             }
