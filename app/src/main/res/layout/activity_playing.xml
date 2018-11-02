@@ -39,6 +39,58 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <Button
+                android:id="@+id/btnAnswerA"
+                android:text="Answer A"
+                android:textcolor="@android:color/white"
+                android:textStyle="bold"
+                android:theme="@style/MyButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:background="#FF8a80"
+                android:layout_margin="8dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnAnswerB"
+                android:text="Answer B"
+                android:textcolor="@android:color/white"
+                android:textStyle="bold"
+                android:theme="@style/MyButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:background="#FF8a80"
+                android:layout_margin="8dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnAnswerC"
+                android:text="Answer C"
+                android:textcolor="@android:color/white"
+                android:textStyle="bold"
+                android:theme="@style/MyButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:background="#FF8a80"
+                android:layout_margin="8dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnAnswerD"
+                android:text="Answer D"
+                android:textcolor="@android:color/white"
+                android:textStyle="bold"
+                android:theme="@style/MyButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:background="#FF8a80"
+                android:layout_margin="8dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <LinearLayout
                 android:weightSum="2"
                 android:layout_width="match_parent"
@@ -73,6 +125,7 @@
                 android:max="5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            
 
         </LinearLayout>
 
