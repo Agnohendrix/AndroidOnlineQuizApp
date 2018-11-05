@@ -1,9 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_main"
     tools:context=".Done">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="30dp"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:id="@+id/btnGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/txtTotalScore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Score: 0"
+                android:textColor="@android:color/white"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/txtTotalQuestions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Correct: 0/30"
+                android:textColor="@android:color/white"
+                android:textSize="30sp" />
+
+            <Button
+                android:id="@+id/btnTryAgain"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="#AD1457"
+                android:foreground="?android:selectableItemBackground"
+                android:text="TRY AGAIN"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:theme="@style/MyButton" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

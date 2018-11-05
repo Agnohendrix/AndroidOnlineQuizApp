@@ -9,12 +9,13 @@ public class Question {
             CorrectAnswer,
             Image;
 
-    private boolean IsImageQuestion;
+    private String IsImageQuestion;
 
-    private int CategoryId;
+    private String CategoryId;
 
+    public Question(){}
 
-    public Question(String question, String answerA, String answerB, String answerC, String answerD, String correctAnswer, String image, boolean isImageQuestion, int categoryId) {
+    public Question(String question, String answerA, String answerB, String answerC, String answerD, String correctAnswer, String image, String IsImageQuestion, String CategoryId) {
         Question = question;
         AnswerA = answerA;
         AnswerB = answerB;
@@ -22,8 +23,8 @@ public class Question {
         AnswerD = answerD;
         CorrectAnswer = correctAnswer;
         Image = image;
-        IsImageQuestion = isImageQuestion;
-        CategoryId = categoryId;
+        IsImageQuestion = IsImageQuestion;
+        CategoryId = CategoryId;
     }
 
     public String getQuestion() {
@@ -82,19 +83,19 @@ public class Question {
         Image = image;
     }
 
-    public boolean isImageQuestion() {
+    public String getIsImageQuestion() {
         return IsImageQuestion;
     }
 
-    public void setImageQuestion(boolean imageQuestion) {
-        IsImageQuestion = imageQuestion;
+    public void setIsImageQuestion(String IsImageQuestion) {
+        IsImageQuestion = IsImageQuestion;
     }
 
-    public int getCategoryId() {
+    public String getCategoryId() {
         return CategoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(String categoryId) {
         CategoryId = categoryId;
     }
 }
