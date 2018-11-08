@@ -1,4 +1,4 @@
-package com.example.agnohendrix.androidonlinequizapp.CategoryViewHolder;
+package com.example.agnohendrix.androidonlinequizapp.ViewHolder;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
