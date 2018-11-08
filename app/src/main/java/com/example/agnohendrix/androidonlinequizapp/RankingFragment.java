@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.example.agnohendrix.androidonlinequizapp.Interface.ItemClickListener;
@@ -83,7 +84,7 @@ public class RankingFragment extends Fragment {
                 rankingtbl.orderByChild("score")
         ) {
             @Override
-            protected void populateViewHolder(RankingViewHolder viewHolder, Ranking model, int position) {
+            protected void populateViewHolder(final RankingViewHolder viewHolder, Ranking model, int position) {
                 viewHolder.ranking_name.setText(model.getUserName());
                 viewHolder.ranking_score.setText(String.valueOf(model.getScore()));
                 if(model.getUserName().equals(Common.currentUser.getUserName())){
@@ -93,7 +94,7 @@ public class RankingFragment extends Fragment {
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-
+                        Toast.makeText(getContext(), getItem(position).getUserName(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
