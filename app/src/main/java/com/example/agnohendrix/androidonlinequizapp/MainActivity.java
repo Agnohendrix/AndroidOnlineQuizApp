@@ -2,9 +2,13 @@ package com.example.agnohendrix.androidonlinequizapp;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +17,28 @@ import android.widget.Toast;
 
 import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.example.agnohendrix.androidonlinequizapp.Model.User;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.lang.reflect.Array;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference users;
 
+    //Facebook
+    CallbackManager callbackManager;
+    LoginButton loginButton;
+
+    private FirebaseAuth mAuth;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
 
         editUserName = findViewById(R.id.editUserName);
         editPassword = findViewById(R.id.editPassword);
@@ -58,6 +88,41 @@ public class MainActivity extends AppCompatActivity {
                 signIn(editUserName.getText().toString(), editPassword.getText().toString());
             }
         });
+
+        //Aggiunta Facebook
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+
+        callbackManager = CallbackManager.Factory.create();
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setReadPermissions("email");
+
+
+        LoginManager.getInstance().logOut();
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null && accessToken.isExpired();
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+
+        if(accessToken == null)
+            Log.d("token", "Not logged in");
+
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d("token", loginResult.getAccessToken().getToken());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.d("Result", "Cancelled");
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        Log.d("Result", "Error");
+                    }
+                });
     }
 
     private void signIn(final String user, final String pwd) {
