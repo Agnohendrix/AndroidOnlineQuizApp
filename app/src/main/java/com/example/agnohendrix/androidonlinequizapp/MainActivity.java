@@ -22,6 +22,8 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -35,7 +37,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -58,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+
+        callbackManager.onActivityResult(requestCode,resultCode,data);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         users = database.getReference("Users");
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
 
         editUserName = findViewById(R.id.editUserName);
         editPassword = findViewById(R.id.editPassword);
@@ -89,41 +101,60 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Aggiunta Facebook
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
-
         callbackManager = CallbackManager.Factory.create();
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email");
+        loginButton = (LoginButton)findViewById(R.id.login_button);
+        loginButton.setReadPermissions(Arrays.asList("email","public_profile"));
 
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                String accessToken = loginResult.getAccessToken().getToken();
+                Log.i("Provatoken", accessToken);
 
-        LoginManager.getInstance().logOut();
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        boolean isLoggedIn = accessToken != null && accessToken.isExpired();
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-
-        if(accessToken == null)
-            Log.d("token", "Not logged in");
-
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
+                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        Log.d("token", loginResult.getAccessToken().getToken());
-                    }
+                    public void onCompleted(JSONObject object, GraphResponse response) {
 
-                    @Override
-                    public void onCancel() {
-                        Log.d("Result", "Cancelled");
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        Log.d("Result", "Error");
+                        getData(object);
+                        Log.d("Response", response.toString());
                     }
                 });
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id, email");
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+        //If already logged in
+        if(AccessToken.getCurrentAccessToken() != null){
+            Log.d("Resss", AccessToken.getCurrentAccessToken().getUserId());
+        }
+
     }
+
+    private void getData(JSONObject object) {
+        try {
+            URL email = new URL("https://graph.facebook.com/" + object.getString("email"));
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void signIn(final String user, final String pwd) {
         users.addListenerForSingleValueEvent(new ValueEventListener() {
