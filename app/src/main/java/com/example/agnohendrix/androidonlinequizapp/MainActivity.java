@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,10 +25,16 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -66,9 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-
         callbackManager.onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -108,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                /*
                 String accessToken = loginResult.getAccessToken().getToken();
                 Log.i("Provatoken", accessToken);
 
@@ -121,9 +128,15 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 Bundle parameters = new Bundle();
+                Bundle register = new Bundle();
                 parameters.putString("fields", "id, email");
                 request.setParameters(parameters);
                 request.executeAsync();
+
+*/
+                //Ver 2
+                Log.i("Provatoken", loginResult.getAccessToken().getUserId());
+                handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
             @Override
@@ -138,21 +151,59 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //If already logged in
-        if(AccessToken.getCurrentAccessToken() != null){
-            Log.d("Resss", AccessToken.getCurrentAccessToken().getUserId());
-        }
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null &&  !accessToken.isExpired();
+        if(isLoggedIn)
+            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+
+        Log.d("Profilo",Profile.getCurrentProfile().getName());
 
     }
 
-    private void getData(JSONObject object) {
-        try {
-            URL email = new URL("https://graph.facebook.com/" + object.getString("email"));
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+    }
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void handleFacebookAccessToken(AccessToken token){
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Log.d("Sign", "SignIn: success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            final String userfb = user.getDisplayName();
+                            String userfbn = user.getProviderId();
+                            //Controllo se nel db esiste già l'utente
+                            users.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.child(userfb).exists()){
+                                        //L'utente con il nome preso da fb esiste
+                                        //TO-DO Login
+                                        Log.d("Existe", userfb.toString());
+                                    } else {
+                                        //TO-DO SignUp
+                                        //L'utente con il nome preso da fb non esiste
+                                        Log.d("Existe", "Non esiste");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
+                            Log.w("Sign", "SignIn: failed");
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
     }
 
 
