@@ -91,6 +91,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    /*Per registrare sul db l'account facebook salvare l'UID dell'account,
+    * come Username usare il nome dal token(getAccessToken.getUserName()),
+    * come Email usare la email dal token(getAccessToken.getEmail()),
+    * e come password usare password vuota(?)
+    *
+    * In seguito, nel Ranking bisognerà modificare(forse) la lista dei nomi in modo da prendere
+    * lo UserName degli utenti, anzichè l'utente in sè, perchè saltano fuori gli UserID(j20efj29v9nv989wnwvw98)
+    * */
 
     private void showSignupDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
@@ -107,14 +115,14 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.setView(sign_up_layout);
         alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
 
-        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener(){
+        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialogInterface, int i){
                 dialogInterface.dismiss();
             }
         });
 
-        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("REGISTER", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 final User user = new User(editNewUserName.getText().toString(), editNewPassword.getText().toString(), editNewEmail.getText().toString());
