@@ -13,6 +13,7 @@ public class RankingViewHolder extends RecyclerView.ViewHolder implements View.O
 
     private ItemClickListener itemClickListener;
 
+
     public RankingViewHolder(View itemView){
         super(itemView);
         ranking_name = (TextView) itemView.findViewById(R.id.txt_name);
