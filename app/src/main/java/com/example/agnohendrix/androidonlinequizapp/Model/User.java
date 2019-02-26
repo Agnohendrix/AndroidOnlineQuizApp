@@ -1,5 +1,7 @@
 package com.example.agnohendrix.androidonlinequizapp.Model;
 
+import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
+
 public class User {
     private String userName;
     private String password;
@@ -36,5 +38,11 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void unset(){
+        this.userName = NULL;
+        this.password = NULL;
+        this.email = NULL;
     }
 }

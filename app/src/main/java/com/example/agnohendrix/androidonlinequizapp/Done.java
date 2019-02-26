@@ -36,7 +36,7 @@ public class Done extends AppCompatActivity {
         question_score = database.getReference("Question_Score");
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null){
+        if(extras != null) {
             int score = extras.getInt("SCORE");
             int correct = extras.getInt("CORRECT");
             int totalQuestions = extras.getInt("TOTAL");
@@ -45,12 +45,13 @@ public class Done extends AppCompatActivity {
             txtCorrectQuestions.setText(String.format("Correct: %d/%d", correct, totalQuestions));
 
             //Upload to DB
-            question_score.child(String.format("%s_%s", Common.currentUser.getUserName(), Common.categoryId))
-                    .setValue(new QuestionScore(String.format("%s_%s", Common.currentUser.getUserName(), Common.categoryId),
-                            Common.currentUser.getUserName(),
-                            String.valueOf(score)));
+            if (Common.currentUser.getUserName() != "Guest" && Common.currentUser.getPassword() != "Guest" && Common.currentUser.getEmail() != "Guest") {
+                question_score.child(String.format("%s_%s", Common.currentUser.getUserName(), Common.categoryId))
+                        .setValue(new QuestionScore(String.format("%s_%s", Common.currentUser.getUserName(), Common.categoryId),
+                                Common.currentUser.getUserName(),
+                                String.valueOf(score)));
+            }
         }
-
         btnTry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

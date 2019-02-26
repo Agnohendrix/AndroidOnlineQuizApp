@@ -1,5 +1,6 @@
 package com.example.agnohendrix.androidonlinequizapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -7,6 +8,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.example.agnohendrix.androidonlinequizapp.Common.Common;
+
+import static java.security.AccessController.getContext;
 
 public class Home extends AppCompatActivity {
 
@@ -39,11 +45,22 @@ public class Home extends AppCompatActivity {
         });
 
         setDefaultFragment();
+
+
     }
 
     private void setDefaultFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_layout, CategoryFragment.newInstance());
         transaction.commit();
+    }
+
+    @Override
+    public void onBackPressed(){
+        Toast.makeText(Home.this, "Hai premuto indietro", Toast.LENGTH_SHORT).show();
+        Common.currentUser.unset();
+        Intent back = new Intent(Home.this, MainActivity.class);
+        startActivity(back);
+        finish();
     }
 }

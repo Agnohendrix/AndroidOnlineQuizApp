@@ -131,12 +131,17 @@ public class RankingFragment extends Fragment {
                 });
             }*/
         };
-
+        if(Common.currentUser.getUserName() == "Guest" && Common.currentUser.getPassword() == "Guest" && Common.currentUser.getEmail() == "Guest") {
+            Toast.makeText(getContext(), "Can't save rankings as Guest", Toast.LENGTH_LONG).show();
+        }
 
         adapter.notifyDataSetChanged();
         rankingList.setAdapter(adapter);
         adapter.startListening();
         return myFragment;
+
+
+
     }
 
     private void showRanking() {
@@ -167,9 +172,10 @@ public class RankingFragment extends Fragment {
                             QuestionScore ques = data.getValue(QuestionScore.class);
                             sum+=Integer.parseInt(ques.getScore());
                         }
-                        Ranking ranking = new Ranking(userName, sum);
-                        callback.callBack(ranking);
-
+                        if(Common.currentUser.getUserName() != "Guest" && Common.currentUser.getPassword() != "Guest" && Common.currentUser.getEmail() != "Guest") {
+                            Ranking ranking = new Ranking(userName, sum);
+                            callback.callBack(ranking);
+                        }
                     }
 
                     @Override
