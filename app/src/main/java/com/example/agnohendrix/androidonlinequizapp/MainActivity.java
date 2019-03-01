@@ -13,6 +13,14 @@ import android.widget.Toast;
 
 import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.example.agnohendrix.androidonlinequizapp.Model.User;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,13 +28,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity {
+
+    private CallbackManager callbackManager;
 
     MaterialEditText editNewUserName, editNewPassword, editNewEmail; //For Sign Up
 
     MaterialEditText editUserName, editPassword; //For Sign In
 
     Button btnSignUp, btnSignIn, btnOffline;
+
+    Button btnFacebook;
 
     FirebaseDatabase database;
     DatabaseReference users;
@@ -70,6 +84,47 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //Facebook integration
+
+        final AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+
+
+        btnFacebook = (LoginButton) findViewById(R.id.login_button);
+        ((LoginButton)btnFacebook).setReadPermissions("email");
+
+        callbackManager = CallbackManager.Factory.create();
+
+
+
+        ((LoginButton)btnFacebook).registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Profile profile = Profile.getCurrentProfile();
+                Toast.makeText(MainActivity.this, profile.getFirstName(), Toast.LENGTH_LONG).show();
+
+
+
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Toast.makeText(MainActivity.this, "Errore", Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void signIn(final String user, final String pwd) {
