@@ -2,6 +2,7 @@ package com.example.agnohendrix.androidonlinequizapp;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -27,6 +30,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -102,8 +108,59 @@ public class MainActivity extends AppCompatActivity {
         ((LoginButton)btnFacebook).registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Profile profile = Profile.getCurrentProfile();
-                Toast.makeText(MainActivity.this, profile.getFirstName(), Toast.LENGTH_LONG).show();
+                final Profile profile = Profile.getCurrentProfile();
+                //Toast.makeText(MainActivity.this, profile.getFirstName() + " " + profile.getMiddleName() + " "  + profile.getLastName(), Toast.LENGTH_LONG).show();
+                GraphRequest request = GraphRequest.newMeRequest(
+                        accessToken,
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(
+                                    JSONObject object,
+                                    GraphResponse response) {
+                                try {
+                                    final String email = object.getString("email");
+                                    //Toast.makeText(MainActivity.this, email, Toast.LENGTH_LONG).show();
+                                    final String username = profile.getFirstName() + " " + profile.getMiddleName() + " " + profile.getLastName();
+
+                                    users.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.child(username).exists()){
+                                                //Login
+                                                User user = dataSnapshot.child(username).getValue(User.class);
+                                                Common.currentUser = user;
+                                                Intent homeActivity = new Intent(MainActivity.this, Home.class);
+                                                startActivity(homeActivity);
+                                                Log.d("Home", "Home");
+                                                finish();
+                                            } else {
+                                                //Registration
+                                                final User reg = new User(username, "", email);
+                                                users.child(reg.getUserName()).setValue(reg);
+                                                //Login
+                                                User user = dataSnapshot.child(username).getValue(User.class);
+                                                Common.currentUser = user;
+                                                Intent homeActivity = new Intent(MainActivity.this, Home.class);
+                                                startActivity(homeActivity);
+                                                Log.d("Home", "Home");
+                                                finish();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                } catch (JSONException e){
+                                    Toast.makeText(MainActivity.this, "JSONException", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,link, email");
+                request.setParameters(parameters);
+                request.executeAsync();
 
 
 
@@ -194,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "User already exists!", Toast.LENGTH_SHORT).show();
                         else{
                             users.child(user.getUserName()).setValue(user);
-                            Toast.makeText(MainActivity.this, "User registration succes!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "User registration success!", Toast.LENGTH_SHORT).show();
                         }
                     }
 
