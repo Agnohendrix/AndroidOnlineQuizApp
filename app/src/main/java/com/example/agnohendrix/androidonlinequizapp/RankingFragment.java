@@ -51,10 +51,11 @@ public class RankingFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         database = FirebaseDatabase.getInstance();
         questionScore = database.getReference("Question_Score");
         rankingtbl = database.getReference("Ranking");
+        rankingtbl.keepSynced(true);
+        questionScore.keepSynced(true);
     }
 
     @Nullable

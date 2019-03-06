@@ -21,6 +21,7 @@ import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -50,13 +51,16 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference users;
-
+    static {
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         database = FirebaseDatabase.getInstance();
+
         users = database.getReference("Users");
 
         editUserName = findViewById(R.id.editUserName);
@@ -83,44 +87,53 @@ public class MainActivity extends AppCompatActivity {
         btnOffline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                LoginManager.getInstance().logOut();
                 Common.currentUser = new User("Guest", "Guest", "Guest");
                 Intent homeActivity = new Intent(MainActivity.this, Home.class);
                 startActivity(homeActivity);
                 Log.d("Home", "Guest");
-                finish();
+                //finish();
             }
         });
 
         //Facebook integration
-
-        final AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-
 
         btnFacebook = (LoginButton) findViewById(R.id.login_button);
         ((LoginButton)btnFacebook).setReadPermissions("email");
 
         callbackManager = CallbackManager.Factory.create();
 
+        final AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+
+
 
 
         ((LoginButton)btnFacebook).registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                //LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile"));
                 final Profile profile = Profile.getCurrentProfile();
+                AccessToken accessToken1 = loginResult.getAccessToken();
+
                 //Toast.makeText(MainActivity.this, profile.getFirstName() + " " + profile.getMiddleName() + " "  + profile.getLastName(), Toast.LENGTH_LONG).show();
                 GraphRequest request = GraphRequest.newMeRequest(
-                        accessToken,
+                        accessToken1,
                         new GraphRequest.GraphJSONObjectCallback() {
                             @Override
                             public void onCompleted(
                                     JSONObject object,
                                     GraphResponse response) {
                                 try {
-                                    final String email = object.getString("email");
+                                    final String email;
+                                    final String name;
+                                    final String username;
+                                    email = object.getString("email");
+                                    name = object.getString("name");
+
                                     //Toast.makeText(MainActivity.this, email, Toast.LENGTH_LONG).show();
-                                    final String username = profile.getFirstName() + " " + profile.getMiddleName() + " " + profile.getLastName();
+                                    username = name;
 
                                     users.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -132,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                                                 Intent homeActivity = new Intent(MainActivity.this, Home.class);
                                                 startActivity(homeActivity);
                                                 Log.d("Home", "Home");
-                                                finish();
+                                                //finish();
                                             } else {
                                                 //Registration
                                                 final User reg = new User(username, "", email);
@@ -143,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                                                 Intent homeActivity = new Intent(MainActivity.this, Home.class);
                                                 startActivity(homeActivity);
                                                 Log.d("Home", "Home");
-                                                finish();
+                                                //finish();
                                             }
                                         }
 
@@ -153,12 +166,13 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     });
                                 } catch (JSONException e){
-                                    Toast.makeText(MainActivity.this, "JSONException", Toast.LENGTH_SHORT).show();
+
+                                    Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,link, email");
+                parameters.putString("fields", "id, name, link, email");
                 request.setParameters(parameters);
                 request.executeAsync();
 

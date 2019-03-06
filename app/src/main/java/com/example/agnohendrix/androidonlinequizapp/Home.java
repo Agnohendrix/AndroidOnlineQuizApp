@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.agnohendrix.androidonlinequizapp.Common.Common;
+import com.facebook.login.LoginManager;
 
 import static java.security.AccessController.getContext;
 
@@ -59,7 +60,9 @@ public class Home extends AppCompatActivity {
     public void onBackPressed(){
         Toast.makeText(Home.this, "Hai premuto indietro", Toast.LENGTH_SHORT).show();
         Common.currentUser.unset();
+        LoginManager.getInstance().logOut();
         Intent back = new Intent(Home.this, MainActivity.class);
+        back.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(back);
         finish();
     }
