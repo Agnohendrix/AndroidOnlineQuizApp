@@ -21,7 +21,6 @@ import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
-import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -97,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Facebook integration
-
         btnFacebook = (LoginButton) findViewById(R.id.login_button);
         ((LoginButton)btnFacebook).setReadPermissions("email");
 
@@ -106,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
         final AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-
-
 
 
         ((LoginButton)btnFacebook).registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -190,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Errore", Toast.LENGTH_LONG).show();
             }
         });
+        //End of Facebook Integration
 
     }
 
@@ -199,35 +196,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signIn(final String user, final String pwd) {
-        users.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //Checks if User exists in database
-                if(dataSnapshot.child(user).exists()){
-                    if(!user.isEmpty()){
-                        User login = dataSnapshot.child(user).getValue(User.class);
-                        //Checks password for inserted user
-                        if(login.getPassword().equals(pwd)){
-                            Intent homeActivity = new Intent(MainActivity.this, Home.class);
-                            Common.currentUser = login;
-                            startActivity(homeActivity);
-                            Log.d("Home", "Home");
-                            finish();
-                        }
-                        else {
-                            Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
-                            Log.d("Homepwd", "Wrongpwd");
-                        }
-                    }
-                }
-                else
-                    Toast.makeText(MainActivity.this, "User does not exist!", Toast.LENGTH_SHORT).show();
-            }
+            users.addListenerForSingleValueEvent(new ValueEventListener() {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    //Checks if User exists in database
+
+                    if (dataSnapshot.child(user).exists()) {
+                        if (!user.isEmpty()) {
+                            if (user.equals("Admin")) {
+                                Log.d("Admin", user + " " + pwd);
+                                User login = dataSnapshot.child(user).getValue(User.class);
+                                if (login.getPassword().equals(pwd)) {
+                                    Intent adminActivity = new Intent(MainActivity.this, AdminActivity.class);
+                                    startActivity(adminActivity);
+                                }
+                            } else {
+
+                                User login = dataSnapshot.child(user).getValue(User.class);
+                                //Checks password for inserted user
+                                if (login.getPassword().equals(pwd)) {
+                                    Intent homeActivity = new Intent(MainActivity.this, Home.class);
+                                    Common.currentUser = login;
+                                    startActivity(homeActivity);
+                                    Log.d("Home", "Home");
+                                    //finish();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
+                                    Log.d("Homepwd", "Wrongpwd");
+                                }
+                            }
+                        }
+                    } else
+                        Toast.makeText(MainActivity.this, "User does not exist!", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
     }
 
     private void showSignupDialog() {

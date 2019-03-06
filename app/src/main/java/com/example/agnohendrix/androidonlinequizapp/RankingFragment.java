@@ -85,13 +85,7 @@ public class RankingFragment extends Fragment {
                 new FirebaseRecyclerOptions.Builder<Ranking>()
                     .setQuery(rankingtbl.orderByChild("score"),Ranking.class).build();
 
-        adapter = new FirebaseRecyclerAdapter<Ranking, RankingViewHolder>(options
-           /*     Ranking.class,
-                R.layout.layout_ranking,
-                RankingViewHolder.class,
-                rankingtbl.orderByChild("score")*/
-
-        ) {
+        adapter = new FirebaseRecyclerAdapter<Ranking, RankingViewHolder>(options) {
             @NonNull
             @Override
             public RankingViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
