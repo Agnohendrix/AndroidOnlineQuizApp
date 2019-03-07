@@ -7,22 +7,25 @@
     tools:context=".AdminActivity"
     android:background="@drawable/background_main">
 
-    <Button
-        android:id="@+id/btnQuestions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Questions"
-        android:layout_centerHorizontal="true"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="177dp" />
+    <FrameLayout
+        android:id="@+id/frame_layout"
+        android:animateLayoutChanges="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/menu_admin">
 
-    <Button
-        android:id="@+id/btnUsers"
-        android:layout_width="wrap_content"
+    </FrameLayout>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/menu_admin"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Users"
-        android:layout_below="@id/btnQuestions"
-        android:layout_centerHorizontal="true"
-        tools:layout_editor_absoluteX="173dp"
-        tools:layout_editor_absoluteY="373dp" />
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        app:itemIconTint="@drawable/nav_item_color_state"
+        app:itemTextColor="@drawable/nav_item_color_state"
+        app:menu="@menu/admin_menu">
+
+    </android.support.design.widget.BottomNavigationView>
+
 </RelativeLayout>
