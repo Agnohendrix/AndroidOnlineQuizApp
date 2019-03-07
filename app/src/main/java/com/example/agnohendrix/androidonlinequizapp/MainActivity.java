@@ -20,6 +20,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.LoginStatusCallback;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -103,14 +104,15 @@ public class MainActivity extends AppCompatActivity {
 
         final AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-
+        if(isLoggedIn) {
+            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+        }
 
         ((LoginButton)btnFacebook).registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 //LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile"));
-                final Profile profile = Profile.getCurrentProfile();
+
                 AccessToken accessToken1 = loginResult.getAccessToken();
 
                 //Toast.makeText(MainActivity.this, profile.getFirstName() + " " + profile.getMiddleName() + " "  + profile.getLastName(), Toast.LENGTH_LONG).show();
@@ -158,11 +160,10 @@ public class MainActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                            Toast.makeText(MainActivity.this, "Sticazzi", Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 } catch (JSONException e){
-
                                     Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -178,12 +179,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Cancellato", Toast.LENGTH_LONG).show();
+                LoginManager.getInstance().logOut();
             }
 
             @Override
             public void onError(FacebookException exception) {
                 Toast.makeText(MainActivity.this, "Errore", Toast.LENGTH_LONG).show();
+                LoginManager.getInstance().logOut();
             }
         });
         //End of Facebook Integration
@@ -208,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("Admin", user + " " + pwd);
                                 User login = dataSnapshot.child(user).getValue(User.class);
                                 if (login.getPassword().equals(pwd)) {
+                                    Common.currentUser = login;
                                     Intent adminActivity = new Intent(MainActivity.this, AdminActivity.class);
                                     startActivity(adminActivity);
                                 }
