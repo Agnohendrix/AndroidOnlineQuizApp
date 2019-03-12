@@ -1,6 +1,7 @@
 package com.example.agnohendrix.androidonlinequizapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -11,10 +12,10 @@ import android.view.MenuItem;
 
 import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.example.agnohendrix.androidonlinequizapp.Model.Category;
-import com.example.agnohendrix.androidonlinequizapp.dummy.DummyContent;
+import com.example.agnohendrix.androidonlinequizapp.Model.Question;
 import com.facebook.login.LoginManager;
 
-public class AdminActivity extends AppCompatActivity implements QuestionsFragment.OnListFragmentInteractionListener {
+public class AdminActivity extends AppCompatActivity implements QuestionsFragment.OnFragmentInteractionListener {
 
     BottomNavigationView bnv;
 
@@ -63,7 +64,7 @@ public class AdminActivity extends AppCompatActivity implements QuestionsFragmen
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }
