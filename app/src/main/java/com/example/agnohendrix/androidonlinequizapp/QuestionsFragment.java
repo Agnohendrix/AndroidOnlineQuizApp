@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.example.agnohendrix.androidonlinequizapp.Model.Question;
 import com.example.agnohendrix.androidonlinequizapp.ViewHolder.QuestionsViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -82,7 +84,7 @@ public class QuestionsFragment extends Fragment {
         myFragment = inflater.inflate(R.layout.fragment_questions, container, false);
 
         listQuestions = (RecyclerView) myFragment.findViewById(R.id.listQuestions);
-        listQuestions.setHasFixedSize(true);
+        //listQuestions.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(container.getContext());
         listQuestions.setLayoutManager(layoutManager);
 
@@ -93,8 +95,15 @@ public class QuestionsFragment extends Fragment {
 
         adapter = new FirebaseRecyclerAdapter<Question, QuestionsViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull QuestionsViewHolder holder, int position, @NonNull Question model) {
+            protected void onBindViewHolder(@NonNull QuestionsViewHolder holder, int position, @NonNull final Question model) {
                 holder.question_category.setText(model.getCategoryId());
+                holder.question.setText(model.getQuestion());
+                holder.question.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getContext(), model.getCorrectAnswer(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
             @NonNull
