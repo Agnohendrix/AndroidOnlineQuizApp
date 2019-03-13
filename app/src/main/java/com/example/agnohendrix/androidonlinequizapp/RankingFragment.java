@@ -1,8 +1,6 @@
 package com.example.agnohendrix.androidonlinequizapp;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,7 +75,6 @@ public class RankingFragment extends Fragment {
             @Override
             public void callBack(Ranking ranking) {
                 rankingtbl.child(ranking.getUserName()).setValue(ranking);
-                //showRanking(); //Tried for debug
             }
         });
 

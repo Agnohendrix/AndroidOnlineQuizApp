@@ -1,7 +1,6 @@
 package com.example.agnohendrix.androidonlinequizapp;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -11,11 +10,9 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.example.agnohendrix.androidonlinequizapp.Common.Common;
-import com.example.agnohendrix.androidonlinequizapp.Model.Category;
-import com.example.agnohendrix.androidonlinequizapp.Model.Question;
 import com.facebook.login.LoginManager;
 
-public class AdminActivity extends AppCompatActivity implements QuestionsFragment.OnFragmentInteractionListener {
+public class AdminActivity extends AppCompatActivity {
 
     BottomNavigationView bnv;
 
@@ -31,7 +28,7 @@ public class AdminActivity extends AppCompatActivity implements QuestionsFragmen
                 Fragment selectedFragment = null;
                 switch(menuItem.getItemId()){
                     case R.id.action_questions:
-                        //Insert questions fragment;
+                        //Loads Question Fragment
                         selectedFragment = new QuestionsFragment();
                         break;
                     case R.id.action_users:
@@ -49,7 +46,7 @@ public class AdminActivity extends AppCompatActivity implements QuestionsFragmen
 
     private void setDefaultFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_layout, CategoryFragment.newInstance());
+        transaction.replace(R.id.frame_layout, new QuestionsFragment());
         transaction.commit();
     }
 
@@ -63,8 +60,5 @@ public class AdminActivity extends AppCompatActivity implements QuestionsFragmen
         finish();
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
-    }
 }

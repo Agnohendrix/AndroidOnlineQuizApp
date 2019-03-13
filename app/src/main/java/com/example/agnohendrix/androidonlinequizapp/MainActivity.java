@@ -111,12 +111,10 @@ public class MainActivity extends AppCompatActivity {
         ((LoginButton)btnFacebook).registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                //LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile"));
 
                 AccessToken accessToken1 = loginResult.getAccessToken();
 
-                //Toast.makeText(MainActivity.this, profile.getFirstName() + " " + profile.getMiddleName() + " "  + profile.getLastName(), Toast.LENGTH_LONG).show();
-                GraphRequest request = GraphRequest.newMeRequest(
+                 GraphRequest request = GraphRequest.newMeRequest(
                         accessToken1,
                         new GraphRequest.GraphJSONObjectCallback() {
                             @Override
@@ -125,13 +123,10 @@ public class MainActivity extends AppCompatActivity {
                                     GraphResponse response) {
                                 try {
                                     final String email;
-                                    final String name;
                                     final String username;
                                     email = object.getString("email");
-                                    name = object.getString("name");
+                                    username = object.getString("name");
 
-                                    //Toast.makeText(MainActivity.this, email, Toast.LENGTH_LONG).show();
-                                    username = name;
 
                                     users.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override

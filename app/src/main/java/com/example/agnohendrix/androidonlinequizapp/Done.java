@@ -12,7 +12,6 @@ import com.example.agnohendrix.androidonlinequizapp.Model.QuestionScore;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.w3c.dom.Text;
 
 public class Done extends AppCompatActivity {
 
@@ -28,9 +27,9 @@ public class Done extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_done);
 
-        btnTry = (Button)findViewById(R.id.btnTryAgain);
-        txtScore = (TextView)findViewById(R.id.txtTotalScore);
-        txtCorrectQuestions = (TextView)findViewById(R.id.txtTotalQuestions);
+        btnTry = findViewById(R.id.btnTryAgain);
+        txtScore = findViewById(R.id.txtTotalScore);
+        txtCorrectQuestions = findViewById(R.id.txtTotalQuestions);
 
         database = FirebaseDatabase.getInstance();
         question_score = database.getReference("Question_Score");

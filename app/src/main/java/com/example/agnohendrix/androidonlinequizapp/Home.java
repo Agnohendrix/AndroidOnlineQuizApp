@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.facebook.login.LoginManager;
 
-import static java.security.AccessController.getContext;
 
 public class Home extends AppCompatActivity {
 

@@ -51,7 +51,7 @@ public class CategoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myFragment = inflater.inflate(R.layout.fragment_category, container, false);
 
-        listCategory = (RecyclerView) myFragment.findViewById(R.id.listCategory);
+        listCategory = myFragment.findViewById(R.id.listCategory);
         listCategory.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager((container.getContext()));
         listCategory.setLayoutManager(layoutManager);
@@ -63,10 +63,7 @@ public class CategoryFragment extends Fragment {
 
 
         adapter = new FirebaseRecyclerAdapter<Category, CategoryViewHolder>(options
-         /*       Category.class,
-                R.layout.category_layout,
-                CategoryViewHolder.class,
-                categories */
+
         ) {
             @NonNull
             @Override
@@ -92,6 +89,8 @@ public class CategoryFragment extends Fragment {
                     }
                 });
             }
+
+            //Old Firebase API
             /*@Override
             protected void populateViewHolder(CategoryViewHolder viewHolder, final Category model, int position) {
                 viewHolder.category_name.setText(model.getName());
@@ -122,7 +121,7 @@ public class CategoryFragment extends Fragment {
     }
 
 
-/*
+/* OLD FIREBASE API
     private void loadCategories() {
         adapter = new FirebaseRecyclerAdapter<Category, CategoryViewHolder>(options
          /*       Category.class,
