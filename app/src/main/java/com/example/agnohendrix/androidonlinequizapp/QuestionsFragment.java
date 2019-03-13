@@ -1,6 +1,8 @@
 package com.example.agnohendrix.androidonlinequizapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -9,15 +11,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.example.agnohendrix.androidonlinequizapp.Model.Question;
 import com.example.agnohendrix.androidonlinequizapp.ViewHolder.QuestionsViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
 
 
 public class QuestionsFragment extends Fragment {
@@ -49,7 +56,7 @@ public class QuestionsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         myFragment = inflater.inflate(R.layout.fragment_questions, container, false);
@@ -69,10 +76,50 @@ public class QuestionsFragment extends Fragment {
             protected void onBindViewHolder(@NonNull QuestionsViewHolder holder, int position, @NonNull final Question model) {
                 holder.question_category.setText(model.getCategoryId());
                 holder.question.setText(model.getQuestion());
+
+
                 holder.question.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(getContext(), model.getCorrectAnswer(), Toast.LENGTH_LONG).show();
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                        alertDialog.setTitle("Question " + model.getQuestion());
+
+                        alertDialog.setMessage("Modify question");
+                        View modifyQuestion = inflater.inflate(R.layout.modify_question, null);
+
+                        TextView question = modifyQuestion.findViewById(R.id.m_question);
+                        TextView qCat = modifyQuestion.findViewById(R.id.m_question_category);
+                        TextView qAnswerA = modifyQuestion.findViewById(R.id.m_answerA);
+                        TextView qAnswerB = modifyQuestion.findViewById(R.id.m_answerB);
+                        TextView qAnswerC = modifyQuestion.findViewById(R.id.m_answerC);
+                        TextView qAnswerD = modifyQuestion.findViewById(R.id.m_answerD);
+                        TextView qCorrectAnswer = modifyQuestion.findViewById(R.id.m_correct_answer);
+                        ImageView qImage = modifyQuestion.findViewById(R.id.m_question_image);
+
+                        question.setText(model.getQuestion());
+                        qCat.setText(model.getCategoryId());
+                        qAnswerA.setText(model.getAnswerA());
+                        qAnswerB.setText(model.getAnswerB());
+                        qAnswerC.setText(model.getAnswerC());
+                        qAnswerD.setText(model.getAnswerD());
+                        qCorrectAnswer.setText(model.getCorrectAnswer());
+                        if(model.getIsImageQuestion().equals("true")){
+                            Picasso.get().load(model.getImage()).into(qImage);
+                            qImage.setVisibility(View.VISIBLE);
+                        } else {
+                            qImage.setVisibility(View.INVISIBLE);
+                        }
+
+                        alertDialog.setView(modifyQuestion);
+
+                        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i){
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        alertDialog.show();
                     }
                 });
             }
