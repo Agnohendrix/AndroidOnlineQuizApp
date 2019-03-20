@@ -3,11 +3,15 @@ package com.example.agnohendrix.androidonlinequizapp;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.facebook.login.LoginManager;
@@ -16,10 +20,22 @@ public class AdminActivity extends AppCompatActivity {
 
     BottomNavigationView bnv;
 
+    ImageView addQ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
+
+        addQ = findViewById(R.id.add_questions);
+
+        addQ.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(AdminActivity.this, "PremiStoMinchiaDiPiù", Toast.LENGTH_LONG).show();
+            }
+        });
+
 
         bnv = findViewById(R.id.menu_admin);
         bnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

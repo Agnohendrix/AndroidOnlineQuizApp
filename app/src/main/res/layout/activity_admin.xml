@@ -16,6 +16,15 @@
 
     </FrameLayout>
 
+    <ImageView
+        android:id="@+id/add_questions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add_black_56dp"
+        android:layout_above="@id/menu_admin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"/>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/menu_admin"
         android:layout_width="match_parent"

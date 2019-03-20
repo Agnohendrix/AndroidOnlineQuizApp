@@ -2,11 +2,13 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp">
 
     <TextView
         android:id="@+id/question_cat"
         android:text="prova"
+        android:textSize="20dp"
         android:textColor="@color/colorPrimaryDark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -14,6 +16,7 @@
     <TextView
         android:id="@+id/question_text"
         android:textColor="@color/colorPrimaryDark"
+        android:textSize="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

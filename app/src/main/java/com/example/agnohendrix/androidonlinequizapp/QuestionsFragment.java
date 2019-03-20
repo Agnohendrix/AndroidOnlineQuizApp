@@ -3,6 +3,7 @@ package com.example.agnohendrix.androidonlinequizapp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,11 +12,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.example.agnohendrix.androidonlinequizapp.Model.Question;
 import com.example.agnohendrix.androidonlinequizapp.ViewHolder.QuestionsViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -46,8 +48,6 @@ public class QuestionsFragment extends Fragment {
     }
 
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,18 +73,20 @@ public class QuestionsFragment extends Fragment {
         adapter = new FirebaseRecyclerAdapter<Question, QuestionsViewHolder>(options) {
             @Override
             //Populates inflated items
-            protected void onBindViewHolder(@NonNull QuestionsViewHolder holder, int position, @NonNull final Question model) {
-                holder.question_category.setText(model.getCategoryId());
+            protected void onBindViewHolder(@NonNull final QuestionsViewHolder holder, final int position, @NonNull final Question model) {
+                holder.question_category.setText(this.getSnapshots().getSnapshot(position).getKey());
                 holder.question.setText(model.getQuestion());
+                
 
-
-                holder.question.setOnClickListener(new View.OnClickListener() {
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        holder.question.setTextColor(Color.YELLOW);
+                        holder.question_category.setTextColor(Color.YELLOW);
                         Toast.makeText(getContext(), model.getCorrectAnswer(), Toast.LENGTH_LONG).show();
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-                        alertDialog.setTitle("Question " + model.getQuestion());
 
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                        alertDialog.setTitle("Question " + getSnapshots().getSnapshot(position).getKey());
                         alertDialog.setMessage("Modify question");
                         View modifyQuestion = inflater.inflate(R.layout.modify_question, null);
 
@@ -117,6 +119,8 @@ public class QuestionsFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i){
                                 dialogInterface.dismiss();
+                                holder.question.setTextColor(Color.BLACK);
+                                holder.question_category.setTextColor(Color.BLACK);
                             }
                         });
                         alertDialog.show();
