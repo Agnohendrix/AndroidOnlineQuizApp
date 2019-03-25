@@ -135,12 +135,31 @@
         android:layout_marginBottom="10dp"
         android:layout_below="@id/label_image" />
 
+
+
+    <TextView
+        android:id="@+id/label_image_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="10dp"
+        android:text="Link:"
+        android:layout_below="@id/m_question_image"/>
+
+    <EditText
+        android:id="@+id/m_question_image_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/label_image_link"
+        android:layout_marginBottom="10dp"
+        android:text="TextView" />
+
     <Button
         android:id="@+id/modify_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_below="@id/m_question_image"
+        android:layout_below="@id/m_question_image_link"
         android:layout_alignParentRight="true"
         android:text="CONFIRM"/>
 
@@ -151,7 +170,7 @@
         android:layout_margin="10dp"
         android:layout_alignParentLeft="true"
         android:text="CANCEL"
-        android:layout_below="@id/m_question_image"/>
+        android:layout_below="@id/m_question_image_link"/>
 
 </RelativeLayout>
 </ScrollView>

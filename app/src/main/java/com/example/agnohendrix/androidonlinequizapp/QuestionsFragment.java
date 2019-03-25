@@ -104,7 +104,7 @@ public class QuestionsFragment extends Fragment {
                         View modifyQuestion = inflater.inflate(R.layout.modify_question, null);
 
                         TextView imagelbl = modifyQuestion.findViewById(R.id.label_image);
-
+                        TextView imageLinkLbl = modifyQuestion.findViewById(R.id.label_image_link);
 
 
                         Button cancel = modifyQuestion.findViewById(R.id.modify_cancel);
@@ -138,6 +138,7 @@ public class QuestionsFragment extends Fragment {
                         EditText qAnswerD = modifyQuestion.findViewById(R.id.m_answerD);
                         EditText qCorrectAnswer = modifyQuestion.findViewById(R.id.m_correct_answer);
                         ImageView qImage = modifyQuestion.findViewById(R.id.m_question_image);
+                        EditText qImageLnk = modifyQuestion.findViewById(R.id.m_question_image_link);
 
                         question.setText(model.getQuestion());
                         qCat.setText(model.getCategoryId());
@@ -149,11 +150,15 @@ public class QuestionsFragment extends Fragment {
                         if(model.getIsImageQuestion().equals("true")){
                             Picasso.get().load(model.getImage()).into(qImage);
                             qImage.setVisibility(View.VISIBLE);
+                            qImageLnk.setText(model.getImage());
                         } else {
                             imagelbl.setVisibility(View.GONE);
                             qImage.setVisibility(View.GONE);
+                            imageLinkLbl.setVisibility(View.GONE);
+                            qImageLnk.setVisibility(View.GONE);
 
 
+                            //No image, layout is modified
                             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                             params.addRule(RelativeLayout.BELOW, R.id.m_correct_answer);
                             cancel.setLayoutParams(params);
