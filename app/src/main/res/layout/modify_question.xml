@@ -1,63 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:scrollbarAlwaysDrawVerticalTrack="true">
+<RelativeLayout
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <TextView
+        android:id="@+id/label_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Question:"/>
+
+    <EditText
         android:id="@+id/m_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:layout_below="@id/label_question"
         android:text="TextView" />
 
     <TextView
+        android:id="@+id/label_qCat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/m_question"
+        android:text="Question Category:"/>
+
+    <EditText
         android:id="@+id/m_question_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/m_question"
+        android:layout_below="@id/label_qCat"
         android:layout_marginBottom="10dp"
         android:text="TextView" />
 
     <TextView
+        android:id="@+id/label_answerA"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/m_question_category"
+        android:text="Answer A:"/>
+
+    <EditText
         android:id="@+id/m_answerA"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/m_question_category"
+        android:layout_below="@id/label_answerA"
         android:layout_marginBottom="10dp"
         android:text="TextView" />
 
     <TextView
+        android:id="@+id/label_answerB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/m_answerA"
+        android:text="Answer B:"/>
+
+    <EditText
         android:id="@+id/m_answerB"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/m_answerA"
+        android:layout_below="@id/label_answerB"
         android:layout_marginBottom="10dp"
         android:text="TextView" />
 
     <TextView
+        android:id="@+id/label_answerC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/m_answerB"
+        android:text="Answer C:"/>
+
+    <EditText
         android:id="@+id/m_answerC"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/m_answerB"
+        android:layout_below="@id/label_answerC"
         android:layout_marginBottom="10dp"
         android:text="TextView" />
 
     <TextView
+        android:id="@+id/label_answerD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/m_answerC"
+        android:text="Answer D:"/>
+
+    <EditText
         android:id="@+id/m_answerD"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/m_answerC"
+        android:layout_below="@id/label_answerD"
         android:layout_marginBottom="10dp"
         android:text="TextView" />
 
     <TextView
+        android:id="@+id/label_correctAns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/m_answerD"
+        android:text="Correct answer:"/>
+
+    <EditText
         android:id="@+id/m_correct_answer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/m_answerD"
+        android:layout_below="@id/label_correctAns"
         android:layout_marginBottom="10dp"
         android:text="TextView" />
+
+    <TextView
+        android:id="@+id/label_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/m_correct_answer"
+        android:text="Image:"/>
 
     <ImageView
         android:id="@+id/m_question_image"
@@ -65,5 +133,25 @@
         android:layout_height="200dp"
         android:layout_centerInParent="true"
         android:layout_marginBottom="10dp"
-        android:layout_below="@id/m_correct_answer" />
+        android:layout_below="@id/label_image" />
+
+    <Button
+        android:id="@+id/modify_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_below="@id/m_question_image"
+        android:layout_alignParentRight="true"
+        android:text="CONFIRM"/>
+
+    <Button
+        android:id="@+id/modify_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_alignParentLeft="true"
+        android:text="CANCEL"
+        android:layout_below="@id/m_question_image"/>
+
 </RelativeLayout>
+</ScrollView>

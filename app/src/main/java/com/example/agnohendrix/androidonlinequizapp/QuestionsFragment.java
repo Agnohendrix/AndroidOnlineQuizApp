@@ -9,12 +9,16 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +31,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
+
+import static java.sql.Types.NULL;
 
 
 public class QuestionsFragment extends Fragment {
@@ -85,18 +91,52 @@ public class QuestionsFragment extends Fragment {
                         holder.question_category.setTextColor(Color.YELLOW);
                         Toast.makeText(getContext(), model.getCorrectAnswer(), Toast.LENGTH_LONG).show();
 
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                        final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                        alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener()  {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                holder.question.setTextColor(Color.BLACK);
+                                holder.question_category.setTextColor(Color.BLACK);
+                            }
+                        });
                         alertDialog.setTitle("Question " + getSnapshots().getSnapshot(position).getKey());
                         alertDialog.setMessage("Modify question");
                         View modifyQuestion = inflater.inflate(R.layout.modify_question, null);
 
-                        TextView question = modifyQuestion.findViewById(R.id.m_question);
-                        TextView qCat = modifyQuestion.findViewById(R.id.m_question_category);
-                        TextView qAnswerA = modifyQuestion.findViewById(R.id.m_answerA);
-                        TextView qAnswerB = modifyQuestion.findViewById(R.id.m_answerB);
-                        TextView qAnswerC = modifyQuestion.findViewById(R.id.m_answerC);
-                        TextView qAnswerD = modifyQuestion.findViewById(R.id.m_answerD);
-                        TextView qCorrectAnswer = modifyQuestion.findViewById(R.id.m_correct_answer);
+                        TextView imagelbl = modifyQuestion.findViewById(R.id.label_image);
+
+
+
+                        Button cancel = modifyQuestion.findViewById(R.id.modify_cancel);
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                holder.question.setTextColor(Color.BLACK);
+                                holder.question_category.setTextColor(Color.BLACK);
+                                alertDialog.dismiss();
+                            }
+                        });
+
+
+                        Button confirm = modifyQuestion.findViewById(R.id.modify_confirm);
+                        confirm.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //Modify DB
+                                holder.question.setTextColor(Color.BLACK);
+                                holder.question_category.setTextColor(Color.BLACK);
+                                alertDialog.dismiss();
+                            }
+                        });
+
+
+                        EditText question = modifyQuestion.findViewById(R.id.m_question);
+                        EditText qCat = modifyQuestion.findViewById(R.id.m_question_category);
+                        EditText qAnswerA = modifyQuestion.findViewById(R.id.m_answerA);
+                        EditText qAnswerB = modifyQuestion.findViewById(R.id.m_answerB);
+                        EditText qAnswerC = modifyQuestion.findViewById(R.id.m_answerC);
+                        EditText qAnswerD = modifyQuestion.findViewById(R.id.m_answerD);
+                        EditText qCorrectAnswer = modifyQuestion.findViewById(R.id.m_correct_answer);
                         ImageView qImage = modifyQuestion.findViewById(R.id.m_question_image);
 
                         question.setText(model.getQuestion());
@@ -110,19 +150,21 @@ public class QuestionsFragment extends Fragment {
                             Picasso.get().load(model.getImage()).into(qImage);
                             qImage.setVisibility(View.VISIBLE);
                         } else {
-                            qImage.setVisibility(View.INVISIBLE);
+                            imagelbl.setVisibility(View.GONE);
+                            qImage.setVisibility(View.GONE);
+
+
+                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            params.addRule(RelativeLayout.BELOW, R.id.m_correct_answer);
+                            cancel.setLayoutParams(params);
+
+                            RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            params2.addRule(RelativeLayout.BELOW, R.id.m_correct_answer);
+                            params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                            confirm.setLayoutParams(params2);
                         }
 
                         alertDialog.setView(modifyQuestion);
-
-                        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i){
-                                dialogInterface.dismiss();
-                                holder.question.setTextColor(Color.BLACK);
-                                holder.question_category.setTextColor(Color.BLACK);
-                            }
-                        });
                         alertDialog.show();
                     }
                 });
