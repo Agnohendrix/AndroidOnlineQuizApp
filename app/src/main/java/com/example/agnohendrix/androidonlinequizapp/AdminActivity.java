@@ -26,7 +26,7 @@ public class AdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
-
+/*
         addQ = findViewById(R.id.add_questions);
 
         addQ.setOnClickListener(new View.OnClickListener() {
@@ -35,7 +35,7 @@ public class AdminActivity extends AppCompatActivity {
                 Toast.makeText(AdminActivity.this, "PremiStoMinchiaDiPiù", Toast.LENGTH_LONG).show();
             }
         });
-
+*/
 
         bnv = findViewById(R.id.menu_admin);
         bnv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -75,6 +75,7 @@ public class AdminActivity extends AppCompatActivity {
         startActivity(back);
         finish();
     }
+
 
 
 }

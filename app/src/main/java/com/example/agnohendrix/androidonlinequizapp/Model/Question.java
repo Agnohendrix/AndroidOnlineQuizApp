@@ -23,8 +23,8 @@ public class Question {
         AnswerD = answerD;
         CorrectAnswer = correctAnswer;
         Image = image;
-        IsImageQuestion = IsImageQuestion;
-        CategoryId = CategoryId;
+        this.IsImageQuestion = IsImageQuestion;
+        this.CategoryId = CategoryId;
     }
 
     public String getQuestion() {
