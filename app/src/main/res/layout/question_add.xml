@@ -44,6 +44,11 @@
             android:layout_marginBottom="10dp"
             android:text="" />
 
+        <Spinner
+            android:id="@+id/dropdown_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></Spinner>
+
         <TextView
             android:id="@+id/label_answerA"
             android:layout_width="match_parent"

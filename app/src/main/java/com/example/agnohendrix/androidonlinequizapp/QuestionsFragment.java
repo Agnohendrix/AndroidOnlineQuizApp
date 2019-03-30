@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,11 +35,20 @@ import com.example.agnohendrix.androidonlinequizapp.Model.Question;
 import com.example.agnohendrix.androidonlinequizapp.ViewHolder.QuestionsViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.sql.Types.NULL;
 
@@ -223,7 +233,13 @@ public class QuestionsFragment extends Fragment {
                 add.setMessage("Eddaje");
                 final View addQuestion = inflater.inflate(R.layout.question_add, null);
 
+                final Spinner cat = addQuestion.findViewById(R.id.dropdown_category);
+                final List<String> items = new ArrayList<String>();
+
+
                 //Get EditView data
+
+
                 final EditText question = addQuestion.findViewById(R.id.a_question);
                 final EditText qCat = addQuestion.findViewById(R.id.a_question_category);
                 final EditText qAnswerA = addQuestion.findViewById(R.id.a_answerA);
@@ -245,12 +261,22 @@ public class QuestionsFragment extends Fragment {
                                         .load(qImageLnk.getText().toString())
                                         .placeholder(R.drawable.ic_image_black_24dp)
                                         .error(R.drawable.ic_image_black_24dp)
-                                        .into(qImage);
+                                        .into(qImage, new Callback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                Toast.makeText(getContext(), "Loaded!", Toast.LENGTH_LONG).show();
+
+                                            }
+
+                                            @Override
+                                            public void onError(Exception e) {
+                                                Toast.makeText(getContext(), "Error!", Toast.LENGTH_LONG).show();
+                                                qImageLnk.setText("");
+                                            }
+                                        });
                             }
 
                         }
-                        //Toast.makeText(getContext(), "Focuuuuus", Toast.LENGTH_LONG).show();
-                        //Log.d("Focussss", "Focuuuuuuuuuuuuuuuuuuuussss");
                     }
                 });
 
@@ -293,9 +319,6 @@ public class QuestionsFragment extends Fragment {
                             ok = false;
                             Toast.makeText(getContext(), "CorrectAnswer must match A, B, C or D!", Toast.LENGTH_LONG).show();
                         }
-
-
-
 
                         if(qAnswerD.getText().toString().isEmpty()){
                             qAnswerD.setBackground(sd);
@@ -347,6 +370,44 @@ public class QuestionsFragment extends Fragment {
 
                         if(ok) {
                             //Add Firebase behavior
+                            String isImage = "false";
+                            if(qImageLnk.getText().toString().equals(""))
+                                isImage = "false";
+                            else
+                                isImage = "true";
+
+                            final Question newQ = new Question(question.getText().toString(),
+                                                         qAnswerA.getText().toString(),
+                                                         qAnswerB.getText().toString(),
+                                                         qAnswerC.getText().toString(),
+                                                         qAnswerD.getText().toString(),
+                                                         qCorrectAnswer.getText().toString(),
+                                                         qImageLnk.getText().toString(),
+                                                         isImage,
+                                                         qCat.getText().toString());
+                            Toast.makeText(getContext(), newQ.getImage() + " " + newQ.getIsImageQuestion(), Toast.LENGTH_LONG).show();
+                            ValueEventListener listener = new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    //Toast.makeText(getContext(), String.valueOf(dataSnapshot.getChildrenCount()), Toast.LENGTH_LONG).show();
+                                    int num = (int) dataSnapshot.getChildrenCount() + 1;
+                                    DecimalFormat decimalFormat = new DecimalFormat("00");
+                                    String number = decimalFormat.format(num);
+                                    questions.child(number).setValue(newQ).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(getContext(), "Question successfully registered!", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    Toast.makeText(getContext(), number, Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_LONG).show();
+                                }
+                            };
+                            questions.addListenerForSingleValueEvent(listener);
                             add.dismiss();
                         }
                     }
