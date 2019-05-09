@@ -35,19 +35,14 @@
             android:layout_below="@id/a_question"
             android:text="Question Category:"/>
 
-        <EditText
-            android:id="@+id/a_question_category"
+        <Spinner
+            android:id="@+id/sp_question_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_below="@id/label_qCat"
-            android:layout_marginBottom="10dp"
-            android:text="" />
+            android:layout_below="@id/label_qCat">
 
-        <Spinner
-            android:id="@+id/dropdown_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"></Spinner>
+        </Spinner>
+
 
         <TextView
             android:id="@+id/label_answerA"
@@ -55,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginBottom="10dp"
-            android:layout_below="@id/a_question_category"
+            android:layout_below="@id/sp_question_category"
             android:text="Answer A:"/>
 
         <EditText

@@ -1,7 +1,6 @@
 package com.example.agnohendrix.androidonlinequizapp;
 
 import android.app.AlertDialog;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -10,23 +9,18 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.solver.widgets.Rectangle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
-import android.view.inputmethod.CompletionInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,13 +38,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.sql.Types.NULL;
 
 
 public class QuestionsFragment extends Fragment {
@@ -92,7 +82,7 @@ public class QuestionsFragment extends Fragment {
 
         FirebaseRecyclerOptions<Question> options =
                 new FirebaseRecyclerOptions.Builder<Question>()
-                        .setQuery(questions,Question.class)
+                        .setQuery(questions, Question.class)
                         .build();
 
         adapter = new FirebaseRecyclerAdapter<Question, QuestionsViewHolder>(options) {
@@ -101,7 +91,7 @@ public class QuestionsFragment extends Fragment {
             protected void onBindViewHolder(@NonNull final QuestionsViewHolder holder, final int position, @NonNull final Question model) {
                 holder.question_category.setText(this.getSnapshots().getSnapshot(position).getKey());
                 holder.question.setText(model.getQuestion());
-                
+
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -111,7 +101,7 @@ public class QuestionsFragment extends Fragment {
                         Toast.makeText(getContext(), model.getCorrectAnswer(), Toast.LENGTH_LONG).show();
 
                         final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-                        alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener()  {
+                        alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialog) {
                                 holder.question.setTextColor(Color.BLACK);
@@ -156,7 +146,7 @@ public class QuestionsFragment extends Fragment {
                         qAnswerC.setText(model.getAnswerC());
                         qAnswerD.setText(model.getAnswerD());
                         qCorrectAnswer.setText(model.getCorrectAnswer());
-                        if(model.getIsImageQuestion().equals("true")){
+                        if (model.getIsImageQuestion().equals("true")) {
                             Picasso.get().load(model.getImage()).into(qImage);
                             qImage.setVisibility(View.VISIBLE);
                             qImageLnk.setText(model.getImage());
@@ -183,21 +173,21 @@ public class QuestionsFragment extends Fragment {
                             public void onClick(View v) {
                                 //Modify DB
                                 String isImage;
-                                if(qImageLnk.getText().toString().equals(""))
+                                if (qImageLnk.getText().toString().equals(""))
                                     isImage = "false";
                                 else
                                     isImage = "true";
 
                                 //Creates instance to modify DB
                                 Question mod = new Question(question.getText().toString(),
-                                                            qAnswerA.getText().toString(),
-                                                            qAnswerB.getText().toString(),
-                                                            qAnswerC.getText().toString(),
-                                                            qAnswerD.getText().toString(),
-                                                            qCorrectAnswer.getText().toString(),
-                                                            qImageLnk.getText().toString(),
-                                                            isImage,
-                                                            qCat.getText().toString());
+                                        qAnswerA.getText().toString(),
+                                        qAnswerB.getText().toString(),
+                                        qAnswerC.getText().toString(),
+                                        qAnswerD.getText().toString(),
+                                        qCorrectAnswer.getText().toString(),
+                                        qImageLnk.getText().toString(),
+                                        isImage,
+                                        qCat.getText().toString());
 
                                 //TO-DO Add Firebase modify.
 
@@ -227,21 +217,56 @@ public class QuestionsFragment extends Fragment {
         addQ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "ProvaPiù", Toast.LENGTH_LONG).show();
+
                 final AlertDialog add = new AlertDialog.Builder(getContext()).create();
-                add.setTitle("ProvaAdd");
-                add.setMessage("Eddaje");
+                add.setTitle("Add Question");
                 final View addQuestion = inflater.inflate(R.layout.question_add, null);
 
-                final Spinner cat = addQuestion.findViewById(R.id.dropdown_category);
+                final Spinner cat = addQuestion.findViewById(R.id.sp_question_category);
                 final List<String> items = new ArrayList<String>();
+
+                DatabaseReference categories = database.getReference("Category");
+                categories.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            items.add(ds.getKey() + " - " + ds.child("name").getValue());
+                            //Toast.makeText(getContext(), items.get(items.size()-1), Toast.LENGTH_LONG).show();
+                        }
+                        final ArrayAdapter<String> spAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items);
+                        spAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        cat.setAdapter(spAdapter);
+                        spAdapter.notifyDataSetChanged();
+
+                        cat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                parent.setSelection(position);
+                                parent.getItemAtPosition(position);
+                                //parent.setBackgroundColor(Color.BLACK);
+                                String valueCat = cat.getSelectedItem().toString().substring(0, Math.min(cat.getSelectedItem().toString().length(), 2));
+                                //String value2 = valueCat.substring(0, 2);
+                                //Toast.makeText(getContext(), valueCat + " ciccia", Toast.LENGTH_LONG).show();
+
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+                                Toast.makeText(getContext(), "Nothing", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
 
                 //Get EditView data
 
-
                 final EditText question = addQuestion.findViewById(R.id.a_question);
-                final EditText qCat = addQuestion.findViewById(R.id.a_question_category);
                 final EditText qAnswerA = addQuestion.findViewById(R.id.a_answerA);
                 final EditText qAnswerB = addQuestion.findViewById(R.id.a_answerB);
                 final EditText qAnswerC = addQuestion.findViewById(R.id.a_answerC);
@@ -254,9 +279,9 @@ public class QuestionsFragment extends Fragment {
                 qImageLnk.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
-                        if(!hasFocus){
+                        if (!hasFocus) {
                             Toast.makeText(getContext(), qImageLnk.getText().toString(), Toast.LENGTH_LONG).show();
-                            if(!qImageLnk.getText().toString().isEmpty()){
+                            if (!qImageLnk.getText().toString().isEmpty()) {
                                 Picasso.get()
                                         .load(qImageLnk.getText().toString())
                                         .placeholder(R.drawable.ic_image_black_24dp)
@@ -285,13 +310,14 @@ public class QuestionsFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         add.dismiss();
+                        //Toast.makeText(getContext(),cat.getSelectedItem().toString(),Toast.LENGTH_LONG).show();
                     }
                 });
 
                 Button confirm = addQuestion.findViewById(R.id.add_confirm);
-                confirm.setOnClickListener(new View.OnClickListener(){
+                confirm.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v){
+                    public void onClick(View v) {
                         boolean ok = true;
                         ShapeDrawable sd = new ShapeDrawable();
                         sd.setShape(new RectShape());
@@ -304,15 +330,15 @@ public class QuestionsFragment extends Fragment {
                         good.getPaint().setColor(Color.TRANSPARENT);
                         good.getPaint().setStrokeWidth(0f);
 
-                        if(qCorrectAnswer.getText().toString().isEmpty()){
+                        if (qCorrectAnswer.getText().toString().isEmpty()) {
                             qCorrectAnswer.setBackground(sd);
                             qCorrectAnswer.requestFocus();
                             ok = false;
-                        } else if(qCorrectAnswer.getText().toString().equals(qAnswerA.getText().toString()) ||
-                                  qCorrectAnswer.getText().toString().equals(qAnswerB.getText().toString()) ||
-                                  qCorrectAnswer.getText().toString().equals(qAnswerC.getText().toString()) ||
-                                  qCorrectAnswer.getText().toString().equals(qAnswerD.getText().toString())){
-                                    qCorrectAnswer.setBackground(good);
+                        } else if (qCorrectAnswer.getText().toString().equals(qAnswerA.getText().toString()) ||
+                                qCorrectAnswer.getText().toString().equals(qAnswerB.getText().toString()) ||
+                                qCorrectAnswer.getText().toString().equals(qAnswerC.getText().toString()) ||
+                                qCorrectAnswer.getText().toString().equals(qAnswerD.getText().toString())) {
+                            qCorrectAnswer.setBackground(good);
                         } else {
                             qCorrectAnswer.setBackground(sd);
                             qCorrectAnswer.requestFocus();
@@ -320,7 +346,7 @@ public class QuestionsFragment extends Fragment {
                             Toast.makeText(getContext(), "CorrectAnswer must match A, B, C or D!", Toast.LENGTH_LONG).show();
                         }
 
-                        if(qAnswerD.getText().toString().isEmpty()){
+                        if (qAnswerD.getText().toString().isEmpty()) {
                             qAnswerD.setBackground(sd);
                             qAnswerD.requestFocus();
                             ok = false;
@@ -328,7 +354,7 @@ public class QuestionsFragment extends Fragment {
                             qAnswerD.setBackground(good);
                         }
 
-                        if(qAnswerC.getText().toString().isEmpty()){
+                        if (qAnswerC.getText().toString().isEmpty()) {
                             qAnswerC.setBackground(sd);
                             qAnswerC.requestFocus();
                             ok = false;
@@ -336,7 +362,7 @@ public class QuestionsFragment extends Fragment {
                             qAnswerC.setBackground(good);
                         }
 
-                        if(qAnswerB.getText().toString().isEmpty()){
+                        if (qAnswerB.getText().toString().isEmpty()) {
                             qAnswerB.setBackground(sd);
                             qAnswerB.requestFocus();
                             ok = false;
@@ -344,23 +370,23 @@ public class QuestionsFragment extends Fragment {
                             qAnswerB.setBackground(good);
                         }
 
-                        if(qAnswerA.getText().toString().isEmpty()){
+                        if (qAnswerA.getText().toString().isEmpty()) {
                             qAnswerA.setBackground(sd);
                             qAnswerA.requestFocus();
                             ok = false;
                         } else {
                             qAnswerA.setBackground(good);
                         }
-
-                        if(qCat.getText().toString().isEmpty()){
+                        /*
+                        if (qCat.getText().toString().isEmpty()) {
                             qCat.setBackground(sd);
                             qCat.requestFocus();
                             ok = false;
                         } else {
                             qCat.setBackground(good);
-                        }
+                        }*/
 
-                        if(question.getText().toString().isEmpty()){
+                        if (question.getText().toString().isEmpty()) {
                             question.setBackground(sd);
                             question.requestFocus();
                             ok = false;
@@ -368,23 +394,23 @@ public class QuestionsFragment extends Fragment {
                             question.setBackground(good);
                         }
 
-                        if(ok) {
+                        if (ok) {
                             //Add Firebase behavior
                             String isImage = "false";
-                            if(qImageLnk.getText().toString().equals(""))
+                            if (qImageLnk.getText().toString().equals(""))
                                 isImage = "false";
                             else
                                 isImage = "true";
 
                             final Question newQ = new Question(question.getText().toString(),
-                                                         qAnswerA.getText().toString(),
-                                                         qAnswerB.getText().toString(),
-                                                         qAnswerC.getText().toString(),
-                                                         qAnswerD.getText().toString(),
-                                                         qCorrectAnswer.getText().toString(),
-                                                         qImageLnk.getText().toString(),
-                                                         isImage,
-                                                         qCat.getText().toString());
+                                    qAnswerA.getText().toString(),
+                                    qAnswerB.getText().toString(),
+                                    qAnswerC.getText().toString(),
+                                    qAnswerD.getText().toString(),
+                                    qCorrectAnswer.getText().toString(),
+                                    qImageLnk.getText().toString(),
+                                    isImage,
+                                    cat.getSelectedItem().toString().substring(0, Math.min(cat.getSelectedItem().toString().length(), 2)));
                             Toast.makeText(getContext(), newQ.getImage() + " " + newQ.getIsImageQuestion(), Toast.LENGTH_LONG).show();
                             ValueEventListener listener = new ValueEventListener() {
                                 @Override
@@ -433,4 +459,7 @@ public class QuestionsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
+
 }
+
+
