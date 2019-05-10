@@ -92,7 +92,7 @@ public class QuestionsFragment extends Fragment {
                 holder.question_category.setText(this.getSnapshots().getSnapshot(position).getKey());
                 holder.question.setText(model.getQuestion());
 
-
+                //Question list
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -100,6 +100,8 @@ public class QuestionsFragment extends Fragment {
                         holder.question_category.setTextColor(Color.YELLOW);
                         Toast.makeText(getContext(), model.getCorrectAnswer(), Toast.LENGTH_LONG).show();
 
+
+                        //Modify question
                         final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
                         alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
@@ -114,6 +116,52 @@ public class QuestionsFragment extends Fragment {
 
                         TextView imagelbl = modifyQuestion.findViewById(R.id.label_image);
                         TextView imageLinkLbl = modifyQuestion.findViewById(R.id.label_image_link);
+
+                        //Add spinner for categories
+                        final Spinner cat = modifyQuestion.findViewById(R.id.sp_question_category);
+                        final List<String> items = new ArrayList<String>();
+
+                        DatabaseReference categories = database.getReference("Category");
+                        categories.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    items.add(ds.getKey() + " - " + ds.child("name").getValue());
+                                    //Toast.makeText(getContext(), items.get(items.size()-1), Toast.LENGTH_LONG).show();
+                                }
+                                final ArrayAdapter<String> spAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items);
+                                spAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                cat.setAdapter(spAdapter);
+                                spAdapter.notifyDataSetChanged();
+
+                                //Preselects saved category
+                                int posCat = 0;
+                                for (String item : items){
+                                    if(item.substring(0, Math.min(item.length(), 2)).equals(model.getCategoryId()))
+                                        cat.setSelection(posCat);
+                                    posCat++;
+                                }
+
+                                cat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                        parent.setSelection(position);
+                                        parent.getItemAtPosition(position);
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parent) {
+                                        Toast.makeText(getContext(), "Nothing", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
 
 
                         Button cancel = modifyQuestion.findViewById(R.id.modify_cancel);
@@ -130,7 +178,6 @@ public class QuestionsFragment extends Fragment {
                         Button confirm = modifyQuestion.findViewById(R.id.modify_confirm);
 
                         final EditText question = modifyQuestion.findViewById(R.id.m_question);
-                        final EditText qCat = modifyQuestion.findViewById(R.id.m_question_category);
                         final EditText qAnswerA = modifyQuestion.findViewById(R.id.m_answerA);
                         final EditText qAnswerB = modifyQuestion.findViewById(R.id.m_answerB);
                         final EditText qAnswerC = modifyQuestion.findViewById(R.id.m_answerC);
@@ -140,13 +187,43 @@ public class QuestionsFragment extends Fragment {
                         final EditText qImageLnk = modifyQuestion.findViewById(R.id.m_question_image_link);
 
                         question.setText(model.getQuestion());
-                        qCat.setText(model.getCategoryId());
+
                         qAnswerA.setText(model.getAnswerA());
                         qAnswerB.setText(model.getAnswerB());
                         qAnswerC.setText(model.getAnswerC());
                         qAnswerD.setText(model.getAnswerD());
                         qCorrectAnswer.setText(model.getCorrectAnswer());
-                        if (model.getIsImageQuestion().equals("true")) {
+
+                        qImageLnk.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                            @Override
+                            public void onFocusChange(View v, boolean hasFocus) {
+                                if (!hasFocus) {
+                                    Toast.makeText(getContext(), qImageLnk.getText().toString(), Toast.LENGTH_LONG).show();
+                                    if (!qImageLnk.getText().toString().isEmpty()) {
+                                        Picasso.get()
+                                                .load(qImageLnk.getText().toString())
+                                                .placeholder(R.drawable.ic_image_black_24dp)
+                                                .error(R.drawable.ic_image_black_24dp)
+                                                .into(qImage, new Callback() {
+                                                    @Override
+                                                    public void onSuccess() {
+                                                        Toast.makeText(getContext(), "Loaded!", Toast.LENGTH_LONG).show();
+
+                                                    }
+
+                                                    @Override
+                                                    public void onError(Exception e) {
+                                                        Toast.makeText(getContext(), "Error!", Toast.LENGTH_LONG).show();
+                                                        qImageLnk.setText("");
+                                                    }
+                                                });
+                                    }
+
+                                }
+                            }
+                        });
+
+                        /*if (model.getIsImageQuestion().equals("true")) {
                             Picasso.get().load(model.getImage()).into(qImage);
                             qImage.setVisibility(View.VISIBLE);
                             qImageLnk.setText(model.getImage());
@@ -166,35 +243,108 @@ public class QuestionsFragment extends Fragment {
                             params2.addRule(RelativeLayout.BELOW, R.id.m_correct_answer);
                             params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                             confirm.setLayoutParams(params2);
-                        }
+
+                        }*/
 
                         confirm.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 //Modify DB
-                                String isImage;
-                                if (qImageLnk.getText().toString().equals(""))
-                                    isImage = "false";
-                                else
-                                    isImage = "true";
+                                boolean ok = true;
+                                ShapeDrawable sd = new ShapeDrawable();
+                                sd.setShape(new RectShape());
+                                sd.getPaint().setColor(Color.RED);
+                                sd.getPaint().setStrokeWidth(10f);
+                                sd.getPaint().setStyle(Paint.Style.STROKE);
 
-                                //Creates instance to modify DB
-                                Question mod = new Question(question.getText().toString(),
-                                        qAnswerA.getText().toString(),
-                                        qAnswerB.getText().toString(),
-                                        qAnswerC.getText().toString(),
-                                        qAnswerD.getText().toString(),
-                                        qCorrectAnswer.getText().toString(),
-                                        qImageLnk.getText().toString(),
-                                        isImage,
-                                        qCat.getText().toString());
+                                ShapeDrawable good = new ShapeDrawable();
+                                good.setShape(new RectShape());
+                                good.getPaint().setColor(Color.TRANSPARENT);
+                                good.getPaint().setStrokeWidth(0f);
 
-                                //TO-DO Add Firebase modify.
+                                if (qCorrectAnswer.getText().toString().isEmpty()) {
+                                    qCorrectAnswer.setBackground(sd);
+                                    qCorrectAnswer.requestFocus();
+                                    ok = false;
+                                } else if (qCorrectAnswer.getText().toString().equals(qAnswerA.getText().toString()) ||
+                                        qCorrectAnswer.getText().toString().equals(qAnswerB.getText().toString()) ||
+                                        qCorrectAnswer.getText().toString().equals(qAnswerC.getText().toString()) ||
+                                        qCorrectAnswer.getText().toString().equals(qAnswerD.getText().toString())) {
+                                    qCorrectAnswer.setBackground(good);
+                                } else {
+                                    qCorrectAnswer.setBackground(sd);
+                                    qCorrectAnswer.requestFocus();
+                                    ok = false;
+                                    Toast.makeText(getContext(), "CorrectAnswer must match A, B, C or D!", Toast.LENGTH_LONG).show();
+                                }
 
+                                if (qAnswerD.getText().toString().isEmpty()) {
+                                    qAnswerD.setBackground(sd);
+                                    qAnswerD.requestFocus();
+                                    ok = false;
+                                } else {
+                                    qAnswerD.setBackground(good);
+                                }
+
+                                if (qAnswerC.getText().toString().isEmpty()) {
+                                    qAnswerC.setBackground(sd);
+                                    qAnswerC.requestFocus();
+                                    ok = false;
+                                } else {
+                                    qAnswerC.setBackground(good);
+                                }
+
+                                if (qAnswerB.getText().toString().isEmpty()) {
+                                    qAnswerB.setBackground(sd);
+                                    qAnswerB.requestFocus();
+                                    ok = false;
+                                } else {
+                                    qAnswerB.setBackground(good);
+                                }
+
+                                if (qAnswerA.getText().toString().isEmpty()) {
+                                    qAnswerA.setBackground(sd);
+                                    qAnswerA.requestFocus();
+                                    ok = false;
+                                } else {
+                                    qAnswerA.setBackground(good);
+                                }
+
+                                if (question.getText().toString().isEmpty()) {
+                                    question.setBackground(sd);
+                                    question.requestFocus();
+                                    ok = false;
+                                } else {
+                                    question.setBackground(good);
+                                }
+
+                                if (ok) {
+                                    //Load into Firebase
+                                    String isImage = "false";
+                                    if (qImageLnk.getText().toString().equals(""))
+                                        isImage = "false";
+                                    else
+                                        isImage = "true";
+
+                                    final Question newQ = new Question(question.getText().toString(),
+                                            qAnswerA.getText().toString(),
+                                            qAnswerB.getText().toString(),
+                                            qAnswerC.getText().toString(),
+                                            qAnswerD.getText().toString(),
+                                            qCorrectAnswer.getText().toString(),
+                                            qImageLnk.getText().toString(),
+                                            isImage,
+                                            cat.getSelectedItem().toString().substring(0, Math.min(cat.getSelectedItem().toString().length(), 2)));
+                                    Toast.makeText(getContext(), newQ.getImage() + " " + newQ.getIsImageQuestion(), Toast.LENGTH_LONG).show();
+
+                                    //TO-DO Add Firebase modify.
+                                    holder.question.setTextColor(Color.BLACK);
+                                    holder.question_category.setTextColor(Color.BLACK);
+                                    alertDialog.dismiss();
+                                }
                                 //End
-                                holder.question.setTextColor(Color.BLACK);
-                                holder.question_category.setTextColor(Color.BLACK);
-                                alertDialog.dismiss();
+
+
                             }
                         });
 
@@ -213,6 +363,8 @@ public class QuestionsFragment extends Fragment {
             }
         };
 
+
+        //Add questions
         addQ = myFragment.findViewById(R.id.add_questions);
         addQ.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,11 +395,6 @@ public class QuestionsFragment extends Fragment {
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                 parent.setSelection(position);
                                 parent.getItemAtPosition(position);
-                                //parent.setBackgroundColor(Color.BLACK);
-                                String valueCat = cat.getSelectedItem().toString().substring(0, Math.min(cat.getSelectedItem().toString().length(), 2));
-                                //String value2 = valueCat.substring(0, 2);
-                                //Toast.makeText(getContext(), valueCat + " ciccia", Toast.LENGTH_LONG).show();
-
                             }
 
                             @Override
@@ -310,7 +457,6 @@ public class QuestionsFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         add.dismiss();
-                        //Toast.makeText(getContext(),cat.getSelectedItem().toString(),Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -377,14 +523,6 @@ public class QuestionsFragment extends Fragment {
                         } else {
                             qAnswerA.setBackground(good);
                         }
-                        /*
-                        if (qCat.getText().toString().isEmpty()) {
-                            qCat.setBackground(sd);
-                            qCat.requestFocus();
-                            ok = false;
-                        } else {
-                            qCat.setBackground(good);
-                        }*/
 
                         if (question.getText().toString().isEmpty()) {
                             question.setBackground(sd);
@@ -395,7 +533,7 @@ public class QuestionsFragment extends Fragment {
                         }
 
                         if (ok) {
-                            //Add Firebase behavior
+                            //Load into Firebase
                             String isImage = "false";
                             if (qImageLnk.getText().toString().equals(""))
                                 isImage = "false";
@@ -415,7 +553,7 @@ public class QuestionsFragment extends Fragment {
                             ValueEventListener listener = new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    //Toast.makeText(getContext(), String.valueOf(dataSnapshot.getChildrenCount()), Toast.LENGTH_LONG).show();
+
                                     int num = (int) dataSnapshot.getChildrenCount() + 1;
                                     DecimalFormat decimalFormat = new DecimalFormat("00");
                                     String number = decimalFormat.format(num);

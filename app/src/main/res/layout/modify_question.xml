@@ -31,20 +31,21 @@
         android:layout_below="@id/m_question"
         android:text="Question Category:"/>
 
-    <EditText
-        android:id="@+id/m_question_category"
+    <Spinner
+        android:id="@+id/sp_question_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/label_qCat"
-        android:layout_marginBottom="10dp"
-        android:text="TextView" />
+        android:layout_below="@id/label_qCat">
+
+    </Spinner>
+
 
     <TextView
         android:id="@+id/label_answerA"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:layout_below="@id/m_question_category"
+        android:layout_below="@id/sp_question_category"
         android:text="Answer A:"/>
 
     <EditText
