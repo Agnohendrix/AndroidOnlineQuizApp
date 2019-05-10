@@ -338,6 +338,31 @@ public class QuestionsFragment extends Fragment {
                                     Toast.makeText(getContext(), newQ.getImage() + " " + newQ.getIsImageQuestion(), Toast.LENGTH_LONG).show();
 
                                     //TO-DO Add Firebase modify.
+                                    ValueEventListener listener = new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                            int num = Integer.valueOf(getSnapshots().getSnapshot(position).getKey());
+                                            DecimalFormat decimalFormat = new DecimalFormat("00");
+                                            String number = decimalFormat.format(num);
+                                            questions.child(number).setValue(newQ).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(getContext(), "Question successfully updated!", Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                            Toast.makeText(getContext(), number, Toast.LENGTH_LONG).show();
+
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_LONG).show();
+                                        }
+                                    };
+                                    questions.addListenerForSingleValueEvent(listener);
+
                                     holder.question.setTextColor(Color.BLACK);
                                     holder.question_category.setTextColor(Color.BLACK);
                                     alertDialog.dismiss();
