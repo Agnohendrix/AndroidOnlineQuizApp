@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -70,6 +71,7 @@ public class Start extends AppCompatActivity {
                     Question quest = postSnapshot.getValue(Question.class);
                     Common.questionList.add(quest);
                 }
+                Collections.shuffle(Common.questionList);
             }
 
             @Override
@@ -77,8 +79,5 @@ public class Start extends AppCompatActivity {
 
             }
         });
-
-        Collections.shuffle(Common.questionList);
-
     }
 }
