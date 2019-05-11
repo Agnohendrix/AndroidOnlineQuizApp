@@ -45,7 +45,7 @@ public class Home extends AppCompatActivity {
         });
 
         setDefaultFragment();
-
+        Toast.makeText(Home.this, "Welcome " + Common.currentUser.getUserName() + "!", Toast.LENGTH_LONG).show();
 
     }
 

@@ -48,7 +48,7 @@ public class AdminActivity extends AppCompatActivity {
                         selectedFragment = new QuestionsFragment();
                         break;
                     case R.id.action_users:
-                        selectedFragment = new RankingFragment();
+                        //selectedFragment = new RankingFragment();
                         break;
                 }
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -58,6 +58,7 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
         setDefaultFragment();
+        Toast.makeText(AdminActivity.this, "Salve padrone", Toast.LENGTH_LONG).show();
     }
 
     private void setDefaultFragment() {

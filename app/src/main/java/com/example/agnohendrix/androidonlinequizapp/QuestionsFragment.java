@@ -187,12 +187,31 @@ public class QuestionsFragment extends Fragment {
                         final EditText qImageLnk = modifyQuestion.findViewById(R.id.m_question_image_link);
 
                         question.setText(model.getQuestion());
-
                         qAnswerA.setText(model.getAnswerA());
                         qAnswerB.setText(model.getAnswerB());
                         qAnswerC.setText(model.getAnswerC());
                         qAnswerD.setText(model.getAnswerD());
                         qCorrectAnswer.setText(model.getCorrectAnswer());
+                        qImageLnk.setText(model.getImage());
+
+
+                        if(!qImageLnk.getText().toString().equals("")){
+                            Picasso.get()
+                                    .load(qImageLnk.getText().toString())
+                                    .placeholder(R.drawable.ic_image_black_24dp)
+                                    .error(R.drawable.ic_image_black_24dp)
+                                    .into(qImage, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+
+                                        }
+
+                                        @Override
+                                        public void onError(Exception e) {
+
+                                        }
+                                    });
+                        }
 
                         qImageLnk.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                             @Override
