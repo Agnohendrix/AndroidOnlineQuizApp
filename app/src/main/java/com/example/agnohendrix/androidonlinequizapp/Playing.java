@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.example.agnohendrix.androidonlinequizapp.Common.Common;
 import com.squareup.picasso.Picasso;
 
+import java.util.Random;
+
 public class Playing extends AppCompatActivity implements View.OnClickListener{
 
     final static long INTERVAL = 1000;
@@ -98,12 +100,28 @@ public class Playing extends AppCompatActivity implements View.OnClickListener{
                 question_text.setText(Common.questionList.get(i).getQuestion());
                 question_image.setVisibility(View.INVISIBLE);
             }
-
-            btnA.setText(Common.questionList.get(i).getAnswerA());
-            btnB.setText(Common.questionList.get(i).getAnswerB());
-            btnC.setText(Common.questionList.get(i).getAnswerC());
-            btnD.setText(Common.questionList.get(i).getAnswerD());
-
+            int random = new Random().nextInt(4);
+            if(random == 0) {
+                btnA.setText(Common.questionList.get(i).getAnswerA());
+                btnB.setText(Common.questionList.get(i).getAnswerB());
+                btnC.setText(Common.questionList.get(i).getAnswerC());
+                btnD.setText(Common.questionList.get(i).getAnswerD());
+            } else if (random == 1){
+                btnA.setText(Common.questionList.get(i).getAnswerD());
+                btnB.setText(Common.questionList.get(i).getAnswerC());
+                btnC.setText(Common.questionList.get(i).getAnswerB());
+                btnD.setText(Common.questionList.get(i).getAnswerA());
+            } else if(random == 2){
+                btnA.setText(Common.questionList.get(i).getAnswerC());
+                btnB.setText(Common.questionList.get(i).getAnswerB());
+                btnC.setText(Common.questionList.get(i).getAnswerA());
+                btnD.setText(Common.questionList.get(i).getAnswerD());
+            } else if(random == 3){
+                btnA.setText(Common.questionList.get(i).getAnswerB());
+                btnB.setText(Common.questionList.get(i).getAnswerC());
+                btnC.setText(Common.questionList.get(i).getAnswerD());
+                btnD.setText(Common.questionList.get(i).getAnswerA());
+            }
             mCountDown.start();
 
         } else {
